@@ -32,7 +32,7 @@ no appcast: the release feed the website already reads is the feed the app reads
 - **A build only ever updates within its own channel.** The channels are separate bundle ids installed
   side by side; crossing would mean installing a different app. `com.tinycast.app.dev` never updates
   at all, and does not advertise the command.
-- **This fork's build, `com.tinycast.app.fork`, is its own channel.** It reads stable releases from
+- **This fork's build, `com.tinycast.app.plus`, is its own channel.** It reads stable releases from
   `ReleaseChannel.releasesRepository` — the fork, not upstream — and those are signed with the fork's
   own certificate, so the leaf match in `BundleSignature` is what lets one fork build replace
   another. `.github/workflows/fork.yml` publishes them.

@@ -103,7 +103,7 @@ struct UpdatesTests {
         let stable = ReleaseChannel(bundleID: "com.tinycast.app")
         let beta = ReleaseChannel(bundleID: "com.tinycast.app.beta")
         let dev = ReleaseChannel(bundleID: "com.tinycast.app.dev")
-        let fork = ReleaseChannel(bundleID: "com.tinycast.app.fork")
+        let fork = ReleaseChannel(bundleID: "com.tinycast.app.plus")
 
         expect(stable == .stable, "the stable bundle id is the stable channel")
         expect(beta == .beta, "the beta bundle id is the beta channel")

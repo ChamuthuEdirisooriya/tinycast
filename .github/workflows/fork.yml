@@ -1,7 +1,7 @@
 name: Fork
 
 # A push checks the branch. The daily run (or "Run workflow") looks for a new upstream stable
-# release, merges it, re-checks everything and publishes a signed Tinycast Fork the app updates to.
+# release, merges it, re-checks everything and publishes a signed Tinycast Plus the app updates to.
 # Scheduled and manual runs only exist on the default branch, so this branch must be the default.
 on:
   push:
@@ -16,8 +16,8 @@ permissions:
 env:
   BRANCH: clipboard-keep-pasted-order
   UPSTREAM: abue-ammar/tinycast
-  APP_NAME: Tinycast Fork
-  APP_BUNDLE_ID: com.tinycast.app.fork
+  APP_NAME: Tinycast Plus
+  APP_BUNDLE_ID: com.tinycast.app.plus
   SIGNING_IDENTITY: Tinycast Fork Signing
   GIT_NAME: ChamuthuEdirisooriya
   GIT_EMAIL: 45410822+ChamuthuEdirisooriya@users.noreply.github.com
@@ -70,7 +70,7 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
-          name: Tinycast-Fork-${{ env.SHORT_SHA }}
+          name: Tinycast-Plus-${{ env.SHORT_SHA }}
           path: ${{ runner.temp }}/dist/
           retention-days: 14
 
@@ -107,7 +107,7 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           # The fork tags without the `v`, so its tags never collide with upstream's in this repo.
           if gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            echo "Tinycast Fork $VERSION is already published; nothing to do"
+            echo "Tinycast Plus $VERSION is already published; nothing to do"
             echo "publish=false" >> "$GITHUB_OUTPUT"
           else
             echo "publish=true" >> "$GITHUB_OUTPUT"
@@ -179,6 +179,6 @@ jobs:
             echo
             gh api "repos/$UPSTREAM/releases/tags/$TAG" --jq '.body // ""'
           } > "$RUNNER_TEMP/notes.md"
-          gh release create "$VERSION" "$RUNNER_TEMP/dist/Tinycast-Fork-$VERSION.zip" \
+          gh release create "$VERSION" "$RUNNER_TEMP/dist/Tinycast-Plus-$VERSION.zip" \
             --repo "$GITHUB_REPOSITORY" --target "$(git rev-parse HEAD)" \
-            --title "Tinycast Fork $VERSION" --notes-file "$RUNNER_TEMP/notes.md"
+            --title "Tinycast Plus $VERSION" --notes-file "$RUNNER_TEMP/notes.md"

@@ -1,7 +1,7 @@
-# Tinycast Fork
+# Tinycast Plus
 
 This branch is upstream Tinycast plus a **Move pasted items to the top** setting (Settings →
-Clipboard). It builds as **Tinycast Fork** (`com.tinycast.app.fork`), which installs beside upstream
+Clipboard). It builds as **Tinycast Plus** (`com.tinycast.app.plus`), which installs beside upstream
 Tinycast, keeps its own settings and history, and updates only from this fork's releases.
 
 ## How it stays current

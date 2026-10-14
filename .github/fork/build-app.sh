@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds and zips Tinycast Fork.app into $RUNNER_TEMP/dist. Usage: build-app.sh [version]
+# Builds and zips Tinycast Plus.app into $RUNNER_TEMP/dist. Usage: build-app.sh [version]
 # Signed with the fork certificate when its secrets are set: an update must carry that same leaf.
 set -euo pipefail
 VERSION="${1:-}"
@@ -52,4 +52,4 @@ echo "Built $APP_NAME $BUILT ($ID), $(lipo -archs "$APP/Contents/MacOS/$APP_NAME
 
 mkdir -p "$RUNNER_TEMP/dist"
 # `ditto` keeps the seal intact, and a name without "-Universal-" is the one Apple silicon takes.
-ditto -c -k --keepParent --sequesterRsrc "$APP" "$RUNNER_TEMP/dist/Tinycast-Fork-$BUILT.zip"
+ditto -c -k --keepParent --sequesterRsrc "$APP" "$RUNNER_TEMP/dist/Tinycast-Plus-$BUILT.zip"
