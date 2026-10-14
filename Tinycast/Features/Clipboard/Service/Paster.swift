@@ -14,10 +14,11 @@ enum Paster {
     /// Write the item and paste it into `previousApp`, activating it so ⌘V lands there.
     @MainActor @discardableResult
     static func paste(
-        _ item: ClipboardItem, store: ClipboardStore, previousApp: NSRunningApplication?
+        _ item: ClipboardItem, store: ClipboardStore, previousApp: NSRunningApplication?,
+        promoting: Bool
     ) -> Bool {
         guard write(item, store: store) else { return false }
-        store.promote(item)
+        if promoting { store.promote(item) }
         previousApp?.activate()
         DispatchQueue.main.asyncAfter(deadline: .now() + activationDelay) {
             postCommandV()
@@ -28,19 +29,20 @@ enum Paster {
     /// Paste only the item's text, so a file arrives as its path and the receiver's style applies.
     @MainActor @discardableResult
     static func pastePlainText(
-        _ item: ClipboardItem, store: ClipboardStore, previousApp: NSRunningApplication?
+        _ item: ClipboardItem, store: ClipboardStore, previousApp: NSRunningApplication?,
+        promoting: Bool
     ) -> Bool {
         guard let text = item.plainText else { return false }
         pasteString(text, previousApp: previousApp)
-        store.promote(item)
+        if promoting { store.promote(item) }
         return true
     }
 
     /// Put the item on the pasteboard without pasting; the marker stops re-capture.
     @MainActor @discardableResult
-    static func copy(_ item: ClipboardItem, store: ClipboardStore) -> Bool {
+    static func copy(_ item: ClipboardItem, store: ClipboardStore, promoting: Bool) -> Bool {
         guard write(item, store: store) else { return false }
-        store.promote(item)
+        if promoting { store.promote(item) }
         return true
     }
 

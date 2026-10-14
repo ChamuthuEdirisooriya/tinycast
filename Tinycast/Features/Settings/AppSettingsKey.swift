@@ -7,6 +7,7 @@ enum AppSettingsKey: String, CaseIterable {
     case clipboardTextSearchEnabled = "clipboardTextSearchEnabled"
     case clipboardRetention = "clipboardRetentionDays"
     case clipboardDefaultAction = "clipboardDefaultAction"
+    case clipboardMovesPastedToTop = "clipboardMovesPastedToTop"
     case clipboardDisabledApps = "clipboardDisabledApps"
     case hyperKey = "hyperKeyPhysicalKey"
     case hyperKeyIncludesShift = "hyperKeyIncludesShift"

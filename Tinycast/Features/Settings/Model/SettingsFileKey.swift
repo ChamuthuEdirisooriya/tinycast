@@ -92,6 +92,7 @@ enum SettingsFileKey: String, CaseIterable, Sendable {
     case clipboardEnabled = "clipboard.enabled"
     case clipboardRetention = "clipboard.retentionDays"
     case clipboardDefaultAction = "clipboard.defaultAction"
+    case clipboardMovesPastedToTop = "clipboard.movesPastedToTop"
     case clipboardDisabledApps = "clipboard.disabledApps"
     case clipboardCommands = "clipboard.commands"
     case emojiSkinTone = "emoji.skinTone"

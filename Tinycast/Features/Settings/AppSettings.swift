@@ -156,6 +156,13 @@ final class AppSettings {
         }
     }
 
+    /// Off keeps a pasted or copied entry in place, so history stays in the order it was copied.
+    var clipboardMovesPastedToTop: Bool {
+        didSet {
+            defaults.set(clipboardMovesPastedToTop, forKey: Key.clipboardMovesPastedToTop.rawValue)
+        }
+    }
+
     var launchAtLogin: Bool {
         didSet { LaunchAtLogin.set(launchAtLogin) }
     }
@@ -646,6 +653,9 @@ final class AppSettings {
         clipboardDefaultAction =
             defaults.string(forKey: Key.clipboardDefaultAction.rawValue)
             .flatMap(ClipboardDefaultAction.init) ?? .paste
+        clipboardMovesPastedToTop =
+            defaults.object(forKey: Key.clipboardMovesPastedToTop.rawValue) == nil
+            || defaults.bool(forKey: Key.clipboardMovesPastedToTop.rawValue)
         launchAtLogin = LaunchAtLogin.isEnabled
         showInMenuBar =
             defaults.object(forKey: Key.showInMenuBar.rawValue) == nil

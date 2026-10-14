@@ -367,6 +367,11 @@ Paste and Keep Window Open (⌥↵) does not promote any entry. The rows hold st
 selection, so ↓ then ⌥↵ pastes a run of entries in order. `Paster.write` therefore only writes the
 pasteboard; `paste` and `copy` promote after it, and `pasteInPlace` does not.
 
+**Move pasted items to the top** (`clipboardMovesPastedToTop`, on by default) is what lets `paste`,
+`pastePlainText` and `copy` promote at all: `ClipboardCoordinator` passes it to each as `promoting`.
+Off, every chord leaves the entry where it is, so a run of screenshots pastes in the order it was
+taken. `ClipboardStore.promote` itself stays unconditional; the setting lives with the caller.
+
 The ten palette slots shared with launcher favorites address this visible Pinned block too. A slot
 uses the current query and type filter, so its first entry is the first visible pin; a missing slot is
 a no-op. They are fixed to the physical number row, with ⌘1…⌘9 then ⌘0 as their labels.

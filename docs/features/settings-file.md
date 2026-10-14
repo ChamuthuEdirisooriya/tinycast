@@ -99,6 +99,7 @@ because the app rewrites the file.
     "enabled": true,
     "retentionDays": 90,
     "defaultAction": "paste",
+    "movesPastedToTop": true,
     "disabledApps": [
       "com.apple.keychainaccess",
       "com.apple.Passwords"

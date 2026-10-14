@@ -90,8 +90,11 @@ final class ClipboardCoordinator {
     func paste(_ item: ClipboardItem) {
         let previous = windowController.previousApp
         paletteCoordinator.hidePalette(restoreFocus: false)
-        // A paste promotes the item, so follow it and keep the moved row highlighted.
-        if Paster.paste(item, store: clipboardStore, previousApp: previous) {
+        // A paste can promote the item, so follow it and keep the moved row highlighted.
+        if Paster.paste(
+            item, store: clipboardStore, previousApp: previous,
+            promoting: settings.clipboardMovesPastedToTop)
+        {
             selectClip(item)
         } else {
             reportUnavailable(item)
@@ -102,7 +105,10 @@ final class ClipboardCoordinator {
     func pasteAsPlainText(_ item: ClipboardItem) {
         let previous = windowController.previousApp
         paletteCoordinator.hidePalette(restoreFocus: false)
-        if Paster.pastePlainText(item, store: clipboardStore, previousApp: previous) {
+        if Paster.pastePlainText(
+            item, store: clipboardStore, previousApp: previous,
+            promoting: settings.clipboardMovesPastedToTop)
+        {
             selectClip(item)
         }
     }
@@ -168,7 +174,7 @@ final class ClipboardCoordinator {
 
     func copyToClipboard(_ item: ClipboardItem) {
         paletteCoordinator.hidePalette(restoreFocus: false)
-        if Paster.copy(item, store: clipboardStore) {
+        if Paster.copy(item, store: clipboardStore, promoting: settings.clipboardMovesPastedToTop) {
             selectClip(item)
         } else {
             reportUnavailable(item)

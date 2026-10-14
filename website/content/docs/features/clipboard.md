@@ -37,6 +37,10 @@ it to **Copy to Clipboard**, <kbd>return</kbd> copies and <kbd>⌘</kbd><kbd>ret
 Double-clicking and the number shortcuts follow the same setting. <kbd>⌥</kbd><kbd>return</kbd>
 always pastes.
 
+Pasting or copying an entry moves it to the top of your history. Turn off **Move pasted items to
+the top** to keep entries where they are, so a batch of screenshots stays in the order you took
+them. <kbd>⌥</kbd><kbd>return</kbd> and pinned entries never move either way.
+
 Pasting needs the [Accessibility permission](/docs/permissions).
 
 You can also **drag any row** into another app. Dragging always copies, so the entry stays in your
@@ -126,6 +130,7 @@ This setting isn't included in [backups](/docs/reference/backup).
 | Keep history for               | 1 Day · 1 Week · 1 Month · 3 Months · 6 Months · 1 Year · Forever | **3 Months**               |
 | Search text in images and PDFs | On · Off                                                          | **Off**                    |
 | Default action                 | Paste · Copy to Clipboard                                         | **Paste**                  |
+| Move pasted items to the top   | On · Off                                                          | **On**                     |
 | Disabled Applications          | A list of apps                                                    | Keychain Access, Passwords |
 | Clear history                  | Removes every saved clip and image                                | None                       |
 

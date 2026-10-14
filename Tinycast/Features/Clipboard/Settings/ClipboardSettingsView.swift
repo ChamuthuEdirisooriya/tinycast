@@ -41,6 +41,10 @@ struct ClipboardSettingsView: View {
                     SettingsRowTitle(.clipboardHistory, "Default action")
                     Text("↵ does this, and Paste takes its shortcut.")
                 }
+                Toggle(isOn: $settings.clipboardMovesPastedToTop) {
+                    SettingsRowTitle(.clipboardHistory, "Move pasted items to the top")
+                    Text("Off keeps history in the order you copied it.")
+                }
             } header: {
                 SettingsSectionHeader(.clipboardHistory)
             }

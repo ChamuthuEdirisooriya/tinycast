@@ -445,6 +445,8 @@ caches, TCC grants and login item, so this cannot disturb an installed copy.
 - ⌃⌘↵ pastes as plain text: a text entry as typed, a file entry as its path rather than the file
 - Default action ▸ Paste as Plain Text: ↵ pastes plain, ⌃⌘↵ pastes, ⌘↵ still copies; an image
   entry's ↵ still pastes the image and its ⌘K menu has no plain row
+- Move pasted items to the top ▸ Off: ↵, ⌘↵ and ⌃⌘↵ leave the entry in place, and reopening lands
+  on the same newest clip; On again: each moves the entry to the top
 - ⇧⌘T on an image row and on an image-file row copies the recognized text, and the ⌘K menu carries
   the same Copy Text row
 - The "Reading text…" progress pill appears while the helper runs and is replaced by the outcome:

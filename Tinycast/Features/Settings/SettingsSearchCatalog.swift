@@ -502,6 +502,9 @@ enum SettingsSearchCatalog {
             .clipboardHistory, "Default action",
             keywords: ["enter", "return", "paste", "copy", "primary"]),
         .init(
+            .clipboardHistory, "Move pasted items to the top",
+            keywords: ["order", "reorder", "promote", "recent", "newest", "keep position"]),
+        .init(
             group: .clipboardDisabledApplications, "Disabled Applications",
             keywords: ["exclude", "password manager", "ignore", "privacy"]),
         .init(
