@@ -103,9 +103,21 @@ struct UpdatesTests {
         let stable = ReleaseChannel(bundleID: "com.tinycast.app")
         let beta = ReleaseChannel(bundleID: "com.tinycast.app.beta")
         let dev = ReleaseChannel(bundleID: "com.tinycast.app.dev")
+        let fork = ReleaseChannel(bundleID: "com.tinycast.app.fork")
 
         expect(stable == .stable, "the stable bundle id is the stable channel")
         expect(beta == .beta, "the beta bundle id is the beta channel")
+        expect(fork == .fork, "the fork bundle id is the fork channel")
+        expect(fork.updatesItself, "the fork updates itself")
+        expect(fork.accepts(prerelease: false), "the fork takes releases")
+        expect(!fork.accepts(prerelease: true), "the fork never takes a prerelease")
+        expect(
+            fork.releasesRepository == "ChamuthuEdirisooriya/tinycast",
+            "the fork reads the fork's releases")
+        expect(
+            stable.releasesRepository == ReleaseFeed.repository
+                && beta.releasesRepository == ReleaseFeed.repository,
+            "the shipped channels read upstream's releases")
         expect(dev == .development, "the dev bundle id is a local build")
         expect(ReleaseChannel(bundleID: nil) == .development, "a missing bundle id never updates")
 

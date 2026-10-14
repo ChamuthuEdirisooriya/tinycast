@@ -32,6 +32,10 @@ no appcast: the release feed the website already reads is the feed the app reads
 - **A build only ever updates within its own channel.** The channels are separate bundle ids installed
   side by side; crossing would mean installing a different app. `com.tinycast.app.dev` never updates
   at all, and does not advertise the command.
+- **This fork's build, `com.tinycast.app.fork`, is its own channel.** It reads stable releases from
+  `ReleaseChannel.releasesRepository` — the fork, not upstream — and those are signed with the fork's
+  own certificate, so the leaf match in `BundleSignature` is what lets one fork build replace
+  another. `.github/workflows/fork.yml` publishes them.
 - **Nothing is installed unless every check passes.** Bundle id, version and signature are all checked
   on the expanded copy before `replaceItemAt` runs, and the running app survives any failure untouched.
 - **Relaunching goes through `NSApp.terminate`, never `exit`.** That is what flushes a pending note

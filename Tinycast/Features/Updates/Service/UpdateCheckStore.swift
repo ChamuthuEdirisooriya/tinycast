@@ -5,7 +5,9 @@ import Foundation
 @Observable
 final class UpdateCheckStore {
     private nonisolated static let endpoint = URL(
-        string: "https://api.github.com/repos/\(ReleaseFeed.repository)/releases?per_page=20")!
+        string: "https://api.github.com/repos/"
+            + "\(ReleaseChannel(bundleID: Bundle.main.bundleIdentifier).releasesRepository)"
+            + "/releases?per_page=20")!
     /// Daily, measured from `lastCheckedAt`, so relaunching never re-asks GitHub.
     private static let refreshInterval: TimeInterval = 24 * 3600
     /// Shorter retry, so a machine offline at launch sees a release soon after it reconnects.

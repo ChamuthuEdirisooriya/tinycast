@@ -1,0 +1,184 @@
+name: Fork
+
+# A push checks the branch. The daily run (or "Run workflow") looks for a new upstream stable
+# release, merges it, re-checks everything and publishes a signed Tinycast Fork the app updates to.
+# Scheduled and manual runs only exist on the default branch, so this branch must be the default.
+on:
+  push:
+    branches: [clipboard-keep-pasted-order]
+  schedule:
+    - cron: "23 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  BRANCH: clipboard-keep-pasted-order
+  UPSTREAM: abue-ammar/tinycast
+  APP_NAME: Tinycast Fork
+  APP_BUNDLE_ID: com.tinycast.app.fork
+  SIGNING_IDENTITY: Tinycast Fork Signing
+  GIT_NAME: ChamuthuEdirisooriya
+  GIT_EMAIL: 45410822+ChamuthuEdirisooriya@users.noreply.github.com
+
+jobs:
+  check:
+    name: Check the branch
+    if: github.event_name == 'push'
+    runs-on: macos-26
+    timeout-minutes: 90
+    concurrency:
+      group: fork-check
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Fetch upstream
+        run: |
+          git remote add upstream "https://github.com/$UPSTREAM.git"
+          git fetch --no-tags upstream main
+
+      - run: .github/fork/select-xcode.sh
+
+      - name: Install SwiftLint
+        run: command -v swiftlint || brew install swiftlint
+
+      - name: Lint
+        run: ./Scripts/lint.sh
+
+      - name: Model files import no UI framework
+        run: |
+          if grep -rln 'import AppKit\|import SwiftUI\|import Cocoa' Tinycast/Features/*/Model/; then
+            echo "::error::A Features/*/Model/ file above imports AppKit, SwiftUI or Cocoa"
+            exit 1
+          fi
+
+      - name: Tests against upstream
+        run: .github/fork/test-against-upstream.sh
+
+      - name: Release build
+        env:
+          SIGNING_P12_BASE64: ${{ secrets.FORK_SIGNING_P12_BASE64 }}
+          SIGNING_P12_PASSWORD: ${{ secrets.FORK_SIGNING_P12_PASSWORD }}
+        run: .github/fork/build-app.sh
+
+      - name: Name the artifact
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Tinycast-Fork-${{ env.SHORT_SHA }}
+          path: ${{ runner.temp }}/dist/
+          retention-days: 14
+
+  release:
+    name: Sync upstream release
+    if: github.event_name != 'push'
+    runs-on: macos-26
+    timeout-minutes: 90
+    concurrency:
+      group: fork-release
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.BRANCH }}
+          fetch-depth: 0
+          # Pushing a merge that touches upstream's own workflow files needs a token GITHUB_TOKEN
+          # can never be: a fine-grained PAT with Contents and Workflows write on this fork.
+          token: ${{ secrets.FORK_PUSH_TOKEN || github.token }}
+
+      - name: Find the newest upstream release
+        id: upstream
+        run: |
+          TAG="$(gh api "repos/$UPSTREAM/releases/latest" --jq .tag_name)"
+          VERSION="${TAG#v}"
+          if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Upstream's latest release tag '$TAG' is not vMAJOR.MINOR.PATCH"
+            exit 1
+          fi
+          echo "Upstream's newest stable release is $TAG"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          # The fork tags without the `v`, so its tags never collide with upstream's in this repo.
+          if gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Tinycast Fork $VERSION is already published; nothing to do"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Merge the upstream release into the branch
+        if: steps.upstream.outputs.publish == 'true'
+        env:
+          TAG: ${{ steps.upstream.outputs.tag }}
+        run: |
+          git config user.name "$GIT_NAME"
+          git config user.email "$GIT_EMAIL"
+          git remote add upstream "https://github.com/$UPSTREAM.git"
+          git fetch --no-tags upstream main "+refs/tags/$TAG:refs/tags/$TAG"
+          if ! git merge --no-edit -m "Merge upstream $TAG" "refs/tags/$TAG"; then
+            echo "::error::Merging upstream $TAG conflicts. Resolve it by hand on $BRANCH, then run this workflow again."
+            git diff --name-only --diff-filter=U | sed 's/^/  conflicted: /'
+            exit 1
+          fi
+          git log -1 --format='Branch is now %h %s'
+
+      - if: steps.upstream.outputs.publish == 'true'
+        run: .github/fork/select-xcode.sh
+
+      - name: Install SwiftLint
+        if: steps.upstream.outputs.publish == 'true'
+        run: command -v swiftlint || brew install swiftlint
+
+      - name: Lint
+        if: steps.upstream.outputs.publish == 'true'
+        run: ./Scripts/lint.sh
+
+      - name: Model files import no UI framework
+        if: steps.upstream.outputs.publish == 'true'
+        run: |
+          if grep -rln 'import AppKit\|import SwiftUI\|import Cocoa' Tinycast/Features/*/Model/; then
+            echo "::error::A Features/*/Model/ file above imports AppKit, SwiftUI or Cocoa"
+            exit 1
+          fi
+
+      - name: Tests against upstream
+        if: steps.upstream.outputs.publish == 'true'
+        run: .github/fork/test-against-upstream.sh
+
+      - name: Signed release build
+        if: steps.upstream.outputs.publish == 'true'
+        env:
+          SIGNING_P12_BASE64: ${{ secrets.FORK_SIGNING_P12_BASE64 }}
+          SIGNING_P12_PASSWORD: ${{ secrets.FORK_SIGNING_P12_PASSWORD }}
+          REQUIRE_SIGNING: 1
+        run: .github/fork/build-app.sh "${{ steps.upstream.outputs.version }}"
+
+      - name: Push the merged branch
+        if: steps.upstream.outputs.publish == 'true'
+        run: |
+          if ! git push origin "HEAD:$BRANCH"; then
+            echo "::error::Could not push $BRANCH. If upstream changed its .github/workflows files, add a FORK_PUSH_TOKEN secret (a fine-grained token with Contents and Workflows write on this fork) and run again."
+            exit 1
+          fi
+
+      - name: Publish the release
+        if: steps.upstream.outputs.publish == 'true'
+        env:
+          TAG: ${{ steps.upstream.outputs.tag }}
+          VERSION: ${{ steps.upstream.outputs.version }}
+        run: |
+          {
+            echo "Tinycast $VERSION, plus this fork's **Move pasted items to the top** setting."
+            echo
+            gh api "repos/$UPSTREAM/releases/tags/$TAG" --jq '.body // ""'
+          } > "$RUNNER_TEMP/notes.md"
+          gh release create "$VERSION" "$RUNNER_TEMP/dist/Tinycast-Fork-$VERSION.zip" \
+            --repo "$GITHUB_REPOSITORY" --target "$(git rev-parse HEAD)" \
+            --title "Tinycast Fork $VERSION" --notes-file "$RUNNER_TEMP/notes.md"
