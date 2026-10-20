@@ -28,6 +28,8 @@ The footer shows where a paste will go, like "Paste to Notes".
 | Paste and Keep Window Open | <kbd>⌥</kbd><kbd>return</kbd>                       |
 | Filter by type             | <kbd>⌘</kbd><kbd>P</kbd>                            |
 | Pin / Unpin Entry          | <kbd>⌘</kbd><kbd>.</kbd>                            |
+| Edit Entry                 | <kbd>⌘</kbd><kbd>E</kbd>                            |
+| Show in Finder             | <kbd>⌘</kbd><kbd>F</kbd>                            |
 | Paste a pinned entry       | <kbd>⌘</kbd><kbd>1</kbd> … <kbd>⌘</kbd><kbd>0</kbd> |
 | Delete Entry               | <kbd>⌃</kbd><kbd>X</kbd>                            |
 | Delete All Entries         | <kbd>⌃</kbd><kbd>⇧</kbd><kbd>X</kbd>                |
@@ -40,6 +42,10 @@ always pastes.
 Pasting or copying an entry moves it to the top of your history. Turn off **Move pasted items to
 the top** to keep entries where they are, so a batch of screenshots stays in the order you took
 them. <kbd>⌥</kbd><kbd>return</kbd> and pinned entries never move either way.
+
+**Edit Entry** opens a text entry for editing. <kbd>⌘</kbd><kbd>return</kbd> saves the change to
+the same entry and puts it on the clipboard. <kbd>return</kbd> starts a new line, and <kbd>esc</kbd>
+cancels.
 
 Pasting needs the [Accessibility permission](/docs/permissions).
 
