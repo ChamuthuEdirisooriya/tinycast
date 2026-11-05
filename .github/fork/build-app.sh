@@ -48,7 +48,10 @@ if [ -n "$VERSION" ] && [ "$BUILT" != "$VERSION" ]; then
     exit 1
 fi
 echo "Built $APP_NAME $BUILT ($ID), $(lipo -archs "$APP/Contents/MacOS/$APP_NAME"), signed by $IDENTITY"
-./Scripts/verify-signature.sh "$APP"
+# The fork certificate is self-signed, so upstream's Developer ID check can never pass here.
+grep -v 'Authority=Developer ID Application: \|timestamped Developer ID' Scripts/verify-signature.sh \
+    > "$RUNNER_TEMP/verify-signature.sh"
+bash "$RUNNER_TEMP/verify-signature.sh" "$APP"
 
 mkdir -p "$RUNNER_TEMP/dist"
 # `ditto` keeps the seal intact, and a name without "-Universal-" is the one Apple silicon takes.
