@@ -6,8 +6,14 @@ BASE="$(git merge-base HEAD upstream/main)"
 echo "Baseline: upstream $(git log -1 --format='%h %s' "$BASE")"
 git worktree add --detach "$RUNNER_TEMP/base" "$BASE" >/dev/null || exit 1
 
+# A crash puts bash's "Trace/BPT trap" notice ahead of the time, which breaks the result count.
+for RUNNER in Scripts/run-tests.sh "$RUNNER_TEMP/base/Scripts/run-tests.sh"; do
+    perl -pi -e 's/took=\$\(< "\$BIN\/\$name\.time"\)/took=\$(tail -n1 "\$BIN\/\$name.time")/' "$RUNNER"
+done
+
 echo "::group::Harnesses on this branch"
 ./Scripts/run-tests.sh 2>&1 | tee "$RUNNER_TEMP/branch.log"
+git checkout -- Scripts/run-tests.sh
 echo "::endgroup::"
 echo "::group::Harnesses on upstream (baseline)"
 ( cd "$RUNNER_TEMP/base" && ./Scripts/run-tests.sh ) 2>&1 | tee "$RUNNER_TEMP/base.log"
