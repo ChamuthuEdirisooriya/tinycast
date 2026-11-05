@@ -1,9 +1,10 @@
 #!/bin/bash
-# Points DEVELOPER_DIR for later steps at the newest Xcode 26 on the runner.
+# Points DEVELOPER_DIR for later steps at the newest released Xcode 27, as upstream's release does.
 set -euo pipefail
-XCODE_PATH="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -n1)"
+# Real folders only: an image's Xcode_27.N.app symlink can point at a release candidate.
+XCODE_PATH="$(find -E /Applications -maxdepth 1 -type d -regex '.*/Xcode_27(\.[0-9]+)*\.app' | sort -V | tail -n1)"
 if [ -z "$XCODE_PATH" ]; then
-    echo "::error::No Xcode 26.x on this runner. Installed Xcodes:"
+    echo "::error::No released Xcode 27.x on this runner. Installed Xcodes:"
     ls /Applications | grep -i xcode || true
     exit 1
 fi
