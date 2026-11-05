@@ -138,7 +138,12 @@ jobs:
 
       - name: Lint
         if: steps.upstream.outputs.publish == 'true'
-        run: ./Scripts/lint.sh
+        env:
+          TAG: ${{ steps.upstream.outputs.tag }}
+        # Upstream lints before it tags, so its release's own migrations must not count as shipped.
+        run: |
+          git tag -d "$TAG" >/dev/null
+          ./Scripts/lint.sh
 
       - name: Model files import no UI framework
         if: steps.upstream.outputs.publish == 'true'
