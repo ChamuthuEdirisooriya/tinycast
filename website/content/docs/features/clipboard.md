@@ -146,7 +146,6 @@ This setting isn't included in [backups](/docs/reference/backup).
 | Keep history for               | 1 Day · 1 Week · 1 Month · 3 Months · 6 Months · 1 Year · Forever | **3 Months**               |
 | Search text in images and PDFs | On · Off                                                          | **Off**                    |
 | Default action                 | Paste · Copy to Clipboard · Paste as Plain Text                   | **Paste**                  |
-| Move pasted items to the top   | On · Off                                                          | **On**                     |
 | Excluded Applications          | A list of apps                                                    | Keychain Access, Passwords |
 | Clear history                  | Removes every entry except pinned ones                            | None                       |
 
